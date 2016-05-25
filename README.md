@@ -14,8 +14,8 @@ If the save is a system save, (Where the game prompts you to save) a flag at
 If the save is from a new game plus, a flag at 0x87 will be set.
 
 ####Save Location
-The current map the player is in is stored as 4 bytes at 0x2e. for example,
-0x00010001 is Colony 9, and 0x00040002 is the Ether Mines.
+The current map the player is in is stored as 4 bytes at 0x2e.  
+For Example, 0x00010001 is Colony 9, and 0x00040002 is the Ether Mines.
 
 
 
@@ -25,8 +25,9 @@ The level of the lead party member is at 0x85.
 
 ####Play Time
 Playtime is stored as a u32 at 0x11eb0. Every 0x1000 units is equal to one
-hour. (0x1000 = 1:00:00 0x24000 = 36:00:00) But only the units from 0x00 to
-about 0xefb are used within each hour.  
+hour.  
+(0x1000 = 1:00:00 0x24000 = 36:00:00)  
+Only the units from 0x00 to about 0xefb are used within each hour.  
 (0x23efb = 35:59:59 0x24000 = 36:00:00)
 
 ####Save Time
