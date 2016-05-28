@@ -58,10 +58,10 @@ saveData parseSave(u8 *saveFile)
     save.st_minute = saveFile[0x22];
     save.st_second = saveFile[0x23];
 
-    for(i = 0; i < 7; i++)
+    for (i = 0; i < 7; i++)
         save.party[i] = saveFile[0x37 + (4 * i)];
 
-    for(i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
         save.guests[i] = saveFile[0x5B + (4 * i)];
 
     return save;
@@ -70,8 +70,8 @@ saveData parseSave(u8 *saveFile)
 void getData(saveData *save, char *newName, char mapName[][3][25])
 {
     sprintf(newName + strlen(newName), "%dh %02dm %02ds Lv %i %s%s%s", save->pt_hour,
-            save->pt_minute, save->pt_second, save->level, save->ngp ? "NG+ " : "",
-            save->syssave ? "System Save - " : "", mapName[save->map][save->submap]);
+        save->pt_minute, save->pt_second, save->level, save->ngp ? "NG+ " : "",
+        save->syssave ? "System Save - " : "", mapName[save->map][save->submap]);
 }
 
 void getParty(saveData *save, char *newName, char charName[][10], u32 precision)
@@ -79,14 +79,14 @@ void getParty(saveData *save, char *newName, char charName[][10], u32 precision)
     u32 i;
 
     sprintf(newName + strlen(newName), "; Party - %.*s", precision, charName[save->party[0]]);
-    for(i = 1; i < 7; i++)
-        if(save->party[i] != 0)
+    for (i = 1; i < 7; i++)
+        if (save->party[i] != 0)
             sprintf(newName + strlen(newName), ", %.*s", precision, charName[save->party[i]]);
 
-    if(save->guests[1] != 0)
+    if (save->guests[1] != 0)
         sprintf(newName + strlen(newName), "; Guests - %.*s", precision, charName[save->guests[0]]);
-    for(i = 1; i < 3; i++)
-        if(save->guests[i] != 0)
+    for (i = 1; i < 3; i++)
+        if (save->guests[i] != 0)
             sprintf(newName + strlen(newName), ", %.*s", precision, charName[save->guests[i]]);
 }
 
@@ -99,23 +99,23 @@ void getParty(saveData *save, char *newName, char charName[][10], u32 precision)
 
 u32 bmpPixelToTpl(u32 in)
 {
-	u32 x = in % WIDTH;
-	u32 y = in / WIDTH;
-	u32 blockX = x / BLOCK_WIDTH;
-	u32 blockY = y / BLOCK_HEIGHT;
-	u32 inBlockX = x % BLOCK_WIDTH;
-	u32 inBlockY = y % BLOCK_HEIGHT;
-	u32 inBlockOffset = inBlockY * BLOCK_HEIGHT + inBlockX;
-	u32 blockNum = blockX + (blockY * WIDTH_IN_BLOCKS);
-	u32 blockOffset = blockNum * BLOCK_HEIGHT * BLOCK_WIDTH;
-	return blockOffset + inBlockOffset;
+    u32 x = in % WIDTH;
+    u32 y = in / WIDTH;
+    u32 blockX = x / BLOCK_WIDTH;
+    u32 blockY = y / BLOCK_HEIGHT;
+    u32 inBlockX = x % BLOCK_WIDTH;
+    u32 inBlockY = y % BLOCK_HEIGHT;
+    u32 inBlockOffset = inBlockY * BLOCK_HEIGHT + inBlockX;
+    u32 blockNum = blockX + (blockY * WIDTH_IN_BLOCKS);
+    u32 blockOffset = blockNum * BLOCK_HEIGHT * BLOCK_WIDTH;
+    return blockOffset + inBlockOffset;
 }
 
 void convPic(char newName[], u8 saveFile[])
 {
     FILE *fp;
     char imgname[180];
-	u32 i;
+    u32 i;
     u8 out[0x94A0];
     u8 header[70] =
     {
@@ -128,17 +128,17 @@ void convPic(char newName[], u8 saveFile[])
         0x00, 0x00, 0x1F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    sprintf(imgname, "%s.bmp", newName);	
-		
-	for(i = 0; i < HEIGHT * WIDTH; i++)
+    sprintf(imgname, "%s.bmp", newName);
+
+    for (i = 0; i < HEIGHT * WIDTH; i++)
     {
-		u32 inOffset = bmpPixelToTpl(i) * 2 + IMAGE_OFFSET;
-		u32 outOffset = i * 2;
-		
+        u32 inOffset = bmpPixelToTpl(i) * 2 + IMAGE_OFFSET;
+        u32 outOffset = i * 2;
+
         out[outOffset] = saveFile[inOffset + 1];
-		out[outOffset + 1] = saveFile[inOffset];
+        out[outOffset + 1] = saveFile[inOffset];
     }
-	
+
     fp = fopen(imgname, "wb");
     fwrite(&header, 1, 70, fp);
     fwrite(&out, 1, 0x94A0, fp);
@@ -149,44 +149,43 @@ void printSave(saveData *save, char charName[][10], char mapName[][3][25])
 {
     char party[34] = "", reserve[34] = "";
 
-    if(save->party[0]) sprintf(party, "%s", charName[save->party[0]]);
-    if(save->party[1]) sprintf(party + strlen(party), ", %s", charName[save->party[1]]);
-    if(save->party[2]) sprintf(party + strlen(party), ", %s", charName[save->party[2]]);
-    if(save->party[3]) sprintf(reserve, "%s", charName[save->party[3]]);
-    if(save->party[4]) sprintf(reserve + strlen(reserve), ", %s", charName[save->party[4]]);
-    if(save->party[5]) sprintf(reserve + strlen(reserve), ", %s", charName[save->party[5]]);
-    if(save->party[6]) sprintf(reserve + strlen(reserve), ", %s", charName[save->party[6]]);
+    if (save->party[0]) sprintf(party, "%s", charName[save->party[0]]);
+    if (save->party[1]) sprintf(party + strlen(party), ", %s", charName[save->party[1]]);
+    if (save->party[2]) sprintf(party + strlen(party), ", %s", charName[save->party[2]]);
+    if (save->party[3]) sprintf(reserve, "%s", charName[save->party[3]]);
+    if (save->party[4]) sprintf(reserve + strlen(reserve), ", %s", charName[save->party[4]]);
+    if (save->party[5]) sprintf(reserve + strlen(reserve), ", %s", charName[save->party[5]]);
+    if (save->party[6]) sprintf(reserve + strlen(reserve), ", %s", charName[save->party[6]]);
 
     printf("-----------------------------------------------------------\n"
-           "-   Lv %02d %-16sPlay Time: %02u:%02u:%02u             -\n"
-           "-   %-22sSave Time: %02d/%02d/%4u %02d:%02d:%02d  -\n"
-           "-   %-22s%-32s-\n"
-           "-   %-22s%-32s-\n"
-           "-----------------------------------------------------------\n",
-           save->level, charName[save->party[0]], save->pt_hour, save->pt_minute, save->pt_second,
-           mapName[save->map][save->submap], save->st_month, save->st_day, save->st_year, save->st_hour, save->st_minute, save->st_second,
-           save->syssave ? "System Save" : "", party,
-           save->ngp ? "New Game +" : "", reserve);
+        "-   Lv %02d %-16sPlay Time: %02u:%02u:%02u             -\n"
+        "-   %-22sSave Time: %02d/%02d/%4u %02d:%02d:%02d  -\n"
+        "-   %-22s%-32s-\n"
+        "-   %-22s%-32s-\n"
+        "-----------------------------------------------------------\n",
+        save->level, charName[save->party[0]], save->pt_hour, save->pt_minute, save->pt_second,
+        mapName[save->map][save->submap], save->st_month, save->st_day, save->st_year, save->st_hour, save->st_minute, save->st_second,
+        save->syssave ? "System Save" : "", party,
+        save->ngp ? "New Game +" : "", reserve);
 }
 
 void usage(const char *name)
 {
     fprintf(stderr, "Usage: %s savefile [-rpiv] [-a abbreviation length]\n"
-            "Options:\n"
-            "    -r: Rename save file. Default unless only -i is set\n"
-            "    -i: Extract the save image\n"
-            "    -p: Add party info to file name\n"
-            "    -v: Display the name of each file as it is renamed\n"
-            "    -a name length: abbreviates party members' names to x chars\n"
-            , name);
-
+        "Options:\n"
+        "    -r: Rename save file. Default unless only -i is set\n"
+        "    -i: Extract the save image\n"
+        "    -p: Add party info to file name\n"
+        "    -v: Display the name of each file as it is renamed\n"
+        "    -a name length: abbreviates party members' names to x chars\n"
+        , name);
 }
 
 s32 main(s32 argc, char *argv[])
 {
     FILE *fp;
     saveData save;
-    char newName[180] = {0};
+    char newName[180] = { 0 };
     char mapName[25][3][25];
     char charName[50][10];
     u8 saveFile[0x11eb4];
@@ -194,8 +193,8 @@ s32 main(s32 argc, char *argv[])
     u32 doRename = 0, party = 0, image = 0, verbose = 0, dummy = 0, precision = 7;
     s32 opt;
 
-    for(i = 0; i < 25; i++)
-        for(j = 0; j < 3; j++)
+    for (i = 0; i < 25; i++)
+        for (j = 0; j < 3; j++)
             sprintf(mapName[i][j], "Area %i, Sublevel %i", i, j);
     sprintf(mapName[0][0], "Cleared Data");
     sprintf(mapName[1][1], "Colony 9");
@@ -226,7 +225,7 @@ s32 main(s32 argc, char *argv[])
     sprintf(mapName[23][1], "Mechonis Core");
     sprintf(mapName[24][1], "Junks");
 
-    for(i = 0; i < 50; i++)
+    for (i = 0; i < 50; i++)
         sprintf(charName[i], "Char %i", i);
     sprintf(charName[1], "Shulk");
     sprintf(charName[2], "Ryen");
@@ -246,9 +245,9 @@ s32 main(s32 argc, char *argv[])
     sprintf(charName[28], "Dickson");
     sprintf(charName[42], "Alvis");
 
-    while((opt = getopt(argc, argv, "a:rpiv")) != -1)
+    while ((opt = getopt(argc, argv, "a:rpiv")) != -1)
     {
-        switch(opt)
+        switch (opt)
         {
         case 'a':
             precision = atoi(optarg);
@@ -271,19 +270,19 @@ s32 main(s32 argc, char *argv[])
             break;
         }
     }
-    if(optind != argc - 1)
+    if (optind != argc - 1)
     {
         usage(argv[0]);
         return 0;
     }
 
-    if(!doRename && !image)
+    if (!doRename && !image)
         doRename = 1;
-    if(party)
+    if (party)
         doRename = 1;
 
     fp = fopen(argv[optind], "rb");
-    if(fp == NULL)
+    if (fp == NULL)
     {
         printf("Could not open %s\n", argv[1]);
         return 0;
@@ -291,22 +290,22 @@ s32 main(s32 argc, char *argv[])
 
     fseek(fp, 0L, SEEK_END);
 
-    if(ftell(fp) != 0x28000)
+    if (ftell(fp) != 0x28000)
     {
         printf("Not a Xenoblade save file\n");
         return 0;
     }
 
-    fseek(fp , 0, SEEK_SET);
+    fseek(fp, 0, SEEK_SET);
     fread(&saveFile, 0x11eb4, 1, fp);
     fclose(fp);
 
-    if(memcmp(saveFile, "USRD", 4) != 0)
+    if (memcmp(saveFile, "USRD", 4) != 0)
     {
-        if(memcmp(saveFile, "DMMY", 4) == 0)
+        if (memcmp(saveFile, "DMMY", 4) == 0)
         {
             sprintf(newName, "Dummy save file");
-            if(verbose)
+            if (verbose)
                 printf("Dummy save file\n");
             dummy = 1;
         }
@@ -317,28 +316,28 @@ s32 main(s32 argc, char *argv[])
         }
     }
 
-    if(!dummy)
+    if (!dummy)
     {
         save = parseSave(saveFile);
 
-        if(doRename)
+        if (doRename)
             getData(&save, newName, mapName);
 
-        if(party)
+        if (party)
             getParty(&save, newName, charName, precision);
 
-        if(image)
+        if (image)
             convPic(doRename ? newName : argv[optind], saveFile);
 
-        if(verbose)
+        if (verbose)
             printSave(&save, charName, mapName);
     }
 
     sprintf(newName + strlen(newName), ".xbsave");
 
-    if(verbose && doRename) printf("Renaming to %s\n\n", newName);
+    if (verbose && doRename) printf("Renaming to %s\n\n", newName);
 
-    if((doRename || dummy) && rename(argv[optind], newName))
+    if ((doRename || dummy) && rename(argv[optind], newName))
         printf("Could not rename to %s\n\n", newName);
 
     return 0;
